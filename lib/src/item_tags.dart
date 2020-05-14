@@ -50,6 +50,7 @@ class ItemTags extends StatefulWidget {
       this.colorShowDuplicate = Colors.red,
       this.onPressed,
       this.onLongPressed,
+      this.enableClearActive = false,
       Key key})
       : assert(index != null),
         assert(title != null),
@@ -136,6 +137,9 @@ class ItemTags extends StatefulWidget {
   /// callback
   final OnLongPressedCallback onLongPressed;
 
+  /// enable clear  active
+  final bool enableClearActive;
+
   @override
   _ItemTagsState createState() => _ItemTagsState();
 }
@@ -175,13 +179,24 @@ class _ItemTagsState extends State<ItemTags> {
           DataList(
               title: widget.title,
               index: widget.index,
-              active: widget.singleItem ? false : widget.active,
+// change by lio
+//              active: widget.singleItem ? false : widget.active,
+              active: widget.active,
               customData: widget.customData));
     } else if (_dataListInherited.list.elementAt(widget.index) == null) {
       //print("replace");
       _dataListInherited.list[widget.index] = DataList(
           title: widget.title,
-          active: widget.singleItem ? false : widget.active,
+// change by lio
+//          active: widget.singleItem ? false : widget.active,
+          active: widget.active,
+          customData: widget.customData);
+    }
+
+    if (widget.enableClearActive) {
+      _dataListInherited.list[widget.index] = DataList(
+          title: widget.title,
+          active: widget.active,
           customData: widget.customData);
     }
 
@@ -190,8 +205,6 @@ class _ItemTagsState extends State<ItemTags> {
         _dataListInherited.list.length > _dataListInherited.itemCount)
       _dataListInherited.list
           .removeRange(widget.index + 1, _dataListInherited.list.length);
-
-    //print(_dataListInherited.list.length);
 
     // update Listener
     if (_dataList != null) _dataList.removeListener(_didValueChange);
@@ -243,7 +256,7 @@ class _ItemTagsState extends State<ItemTags> {
             ? () {
                 if (widget.singleItem) {
                   _singleItem(_dataListInherited, _dataList);
-                  _dataList.active = true;
+                  _dataList.active = !_dataList.active;
                 } else
                   _dataList.active = !_dataList.active;
 
@@ -376,22 +389,22 @@ class _ItemTagsState extends State<ItemTags> {
                     fit: BoxFit.fill,
                     child: GestureDetector(
                       child: Container(
-                        margin: widget.removeButton.margin ??
+                        margin: widget.removeButton?.margin ??
                             EdgeInsets.only(left: 5),
-                        padding:
-                            (widget.removeButton.padding ?? EdgeInsets.all(2)) *
-                                (widget.textStyle.fontSize / 14),
+                        padding: (widget.removeButton?.padding ??
+                                EdgeInsets.all(2)) *
+                            (widget.textStyle.fontSize / 14),
                         decoration: BoxDecoration(
-                          color: widget.removeButton.backgroundColor ??
+                          color: widget.removeButton?.backgroundColor ??
                               Colors.black,
-                          borderRadius: widget.removeButton.borderRadius ??
+                          borderRadius: widget.removeButton?.borderRadius ??
                               BorderRadius.circular(_initBorderRadius),
                         ),
-                        child: widget.removeButton.padding ??
+                        child: widget.removeButton?.padding ??
                             Icon(
                               Icons.clear,
-                              color: widget.removeButton.color ?? Colors.white,
-                              size: (widget.removeButton.size ?? 12) *
+                              color: widget.removeButton?.color ?? Colors.white,
+                              size: (widget.removeButton?.size ?? 12) *
                                   (widget.textStyle.fontSize / 14),
                             ),
                       ),
@@ -444,6 +457,7 @@ class _ItemTagsState extends State<ItemTags> {
 ///callback
 class Item {
   Item({this.index, this.title, this.active, this.customData});
+
   final int index;
   final String title;
   final bool active;
