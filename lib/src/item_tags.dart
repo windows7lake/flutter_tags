@@ -51,6 +51,7 @@ class ItemTags extends StatefulWidget {
       this.onPressed,
       this.onLongPressed,
       this.enableClearActive = false,
+      this.maxPickNum = -1,
       Key key})
       : assert(index != null),
         assert(title != null),
@@ -139,6 +140,9 @@ class ItemTags extends StatefulWidget {
 
   /// enable clear  active
   final bool enableClearActive;
+
+  /// only effective when on multi choose mode
+  final int maxPickNum;
 
   @override
   _ItemTagsState createState() => _ItemTagsState();
@@ -257,8 +261,19 @@ class _ItemTagsState extends State<ItemTags> {
                 if (widget.singleItem) {
                   _singleItem(_dataListInherited, _dataList);
                   _dataList.active = !_dataList.active;
-                } else
-                  _dataList.active = !_dataList.active;
+                } else {
+                  if (widget.maxPickNum == -1)
+                    _dataList.active = !_dataList.active;
+                  if (widget.maxPickNum > 0) {
+                    var activeSize = _dataListInherited.list
+                        .where((value) => value.active == true)
+                        .length;
+                    if ((activeSize < widget.maxPickNum) ||
+                        (activeSize >= widget.maxPickNum && _dataList.active)) {
+                      _dataList.active = !_dataList.active;
+                    }
+                  }
+                }
 
                 if (widget.onPressed != null)
                   widget.onPressed(Item(

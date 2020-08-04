@@ -529,6 +529,7 @@ class _MyHomePageState extends State<MyHomePage>
             fontSize: _fontSize,
           ),
           onPressed: (item) => print(item),
+          maxPickNum: 4,
         );
       },
     );
