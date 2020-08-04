@@ -258,9 +258,11 @@ class _ItemTagsState extends State<ItemTags> {
             child: _combine),
         onTap: widget.pressEnabled
             ? () {
+                bool active = false;
                 if (widget.singleItem) {
                   _singleItem(_dataListInherited, _dataList);
                   _dataList.active = !_dataList.active;
+                  active = _dataList.active;
                 } else {
                   if (widget.maxPickNum == -1)
                     _dataList.active = !_dataList.active;
@@ -271,6 +273,9 @@ class _ItemTagsState extends State<ItemTags> {
                     if ((activeSize < widget.maxPickNum) ||
                         (activeSize >= widget.maxPickNum && _dataList.active)) {
                       _dataList.active = !_dataList.active;
+                      active = _dataList.active;
+                    } else {
+                      active = !_dataList.active;
                     }
                   }
                 }
@@ -279,7 +284,7 @@ class _ItemTagsState extends State<ItemTags> {
                   widget.onPressed(Item(
                       index: widget.index,
                       title: _dataList.title,
-                      active: _dataList.active,
+                      active: active,
                       customData: widget.customData));
               }
             : null,
